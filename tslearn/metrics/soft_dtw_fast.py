@@ -56,11 +56,7 @@ def _softmin3(a, b, c, gamma, be=None):
     -------
     softmin_value : float64
     """
-    be = instantiate_backend(be, a, b, c, gamma)
-    a = be.array(a, dtype=be.float64)
-    b = be.array(b, dtype=be.float64)
-    c = be.array(c, dtype=be.float64)
-    gamma = be.array(gamma, dtype=be.float64)
+    be = instantiate_backend(be, a)
 
     a /= -gamma
     b /= -gamma
@@ -114,12 +110,10 @@ def _soft_dtw(D, R, gamma, be=None):
     be : Backend object or string or None
         Backend.
     """
-    be = instantiate_backend(be, D, R, gamma)
-    D = be.array(D, dtype=be.float64)
-    R = be.array(R, dtype=be.float64)
-    gamma = be.array(gamma, dtype=be.float64)
+    be = instantiate_backend(be, D)
 
-    m, n = be.shape(D)
+    m = D.shape[0]
+    n = D.shape[1]
 
     # Initialization.
     R[: m + 1, 0] = be.dbl_max
@@ -164,9 +158,7 @@ def _soft_dtw_batch(D, R, gamma, be=None):
     be : Backend object or string or None
         Backend.
     """
-    be = instantiate_backend(be, D, R)
-    D = be.array(D)
-    R = be.array(R)
+    be = instantiate_backend(be, D)
     for i_sample in range(D.shape[0]):
         _soft_dtw(D[i_sample, :, :], R[i_sample, :, :], gamma, be=be)
 
@@ -215,10 +207,7 @@ def _soft_dtw_grad(D, R, E, gamma, be=None):
     be : Backend object or string or None
         Backend.
     """
-    be = instantiate_backend(be, D, R, E)
-    D = be.array(D)
-    R = be.array(R)
-    E = be.array(E)
+    be = instantiate_backend(be, D)
 
     m = D.shape[0] - 1
     n = D.shape[1] - 1
@@ -268,10 +257,7 @@ def _soft_dtw_grad_batch(D, R, E, gamma, be=None):
     be : Backend object or string or None
         Backend.
     """
-    be = instantiate_backend(be, D, R, E)
-    D = be.array(D)
-    R = be.array(R)
-    E = be.array(E)
+    be = instantiate_backend(be, D)
     for i_sample in prange(D.shape[0]):
         _soft_dtw_grad(D[i_sample, :, :], R[i_sample, :, :], E[i_sample, :, :], gamma, be=be)
 
